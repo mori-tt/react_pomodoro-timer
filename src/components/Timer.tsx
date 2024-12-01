@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ControlButton } from "./ControlButton";
 import { ModeTypeButton } from "./ModeTypeButton";
 import { TIMER_OPTIONS } from "../constants";
+import useAudio from "../hooks/useAudio";
 
 const Timer = () => {
   const [mode, setMode] = useState<"work" | "break">("work");
@@ -15,39 +16,41 @@ const Timer = () => {
 
   const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  const audioRef = useRef<AudioContext | null>(null);
+  const { audioRef, playChime } = useAudio();
 
-  useEffect(() => {
-    audioRef.current = window.AudioContext ? new window.AudioContext() : null;
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.close();
-      }
-    };
-  }, []);
+  // const audioRef = useRef<AudioContext | null>(null);
 
-  const playBeep = (frequency: number, duration: number) => {
-    if (!audioRef.current) return;
-    const oscillator = audioRef.current.createOscillator();
-    const gainNode = audioRef.current.createGain();
+  // useEffect(() => {
+  //   audioRef.current = window.AudioContext ? new window.AudioContext() : null;
+  //   return () => {
+  //     if (audioRef.current) {
+  //       audioRef.current.close();
+  //     }
+  //   };
+  // }, []);
 
-    oscillator.connect(gainNode);
-    gainNode.connect(audioRef.current.destination);
+  // const playBeep = (frequency: number, duration: number) => {
+  //   if (!audioRef.current) return;
+  //   const oscillator = audioRef.current.createOscillator();
+  //   const gainNode = audioRef.current.createGain();
 
-    gainNode.gain.value = 0.5;
-    oscillator.frequency.value = frequency;
-    oscillator.start();
+  //   oscillator.connect(gainNode);
+  //   gainNode.connect(audioRef.current.destination);
 
-    setTimeout(() => {
-      oscillator.stop();
-    }, duration);
-  };
+  //   gainNode.gain.value = 0.5;
+  //   oscillator.frequency.value = frequency;
+  //   oscillator.start();
 
-  const playChime = () => {
-    playBeep(523.25, 200); // C5: ド
-    setTimeout(() => playBeep(659.25, 200), 200); // E5: ミ
-    setTimeout(() => playBeep(783.99, 400), 400); // G5: ソ
-  };
+  //   setTimeout(() => {
+  //     oscillator.stop();
+  //   }, duration);
+  // };
+
+  // const playChime = () => {
+  //   playBeep(523.25, 200); // C5: ド
+  //   setTimeout(() => playBeep(659.25, 200), 200); // E5: ミ
+  //   setTimeout(() => playBeep(783.99, 400), 400); // G5: ソ
+  // };
 
   // タイマー完了時の処理
   useEffect(() => {
